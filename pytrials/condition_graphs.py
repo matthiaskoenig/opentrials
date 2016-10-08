@@ -12,6 +12,7 @@ import networkx as nx
 
 dir_script = os.path.dirname(os.path.realpath(__file__))
 dir_conditions = os.path.join(dir_script, 'results/conditions')
+dir_queries = os.path.join(dir_script, 'results/queries')
 if not os.path.exists(dir_conditions):
     os.makedirs(dir_conditions)
 
@@ -26,29 +27,29 @@ def get_conditions(client):
     return results
 
 
-def get_trials_for_condition(client, condition):
+def get_trials_for_query(client, query):
     """ Gets the data for the given conditions.
 
     :param client:
-    :param condition:
+    :param query:
     :return:
     """
-    print('*** Query: {} ***'.format(condition))
-    results = ot.query(client, q='conditions.name:{}'.format(condition), endpoint='trials')
+    print('*** Query: {} ***'.format(query))
+    results = ot.query(client, q=query, endpoint='trials')
     print(results['total_count'], len(results['items']))
 
     # Save the data in files
-    f_pkl = os.path.join(dir_conditions, '{}.pkl'.format(condition))
+    f_pkl = os.path.join(dir_queries, '{}.pkl'.format(query))
     ot.save_results(filename=f_pkl, results=results)
 
 
-def create_graph_for_condition(condition):
+def create_graph_for_query(query):
     """ Use networkx to create the graphs.
     :return:
     """
-    print('*** Graph: {} ***'.format(condition))
+    print('*** Graph: {} ***'.format(query))
     # read the results for condition
-    f_pkl = os.path.join(dir_conditions, '{}.pkl'.format(condition))
+    f_pkl = os.path.join(dir_queries, '{}.pkl'.format(query))
     results = ot.load_results(filename=f_pkl)
     # pprint(results['items'][:1])
 
@@ -79,7 +80,7 @@ def create_graph_for_condition(condition):
             G.add_edge(trial_id, inter_id)
 
     # write the graph
-    f_gml = os.path.join(dir_conditions, '{}.gml'.format(condition))
+    f_gml = os.path.join(dir_queries, '{}.gml'.format(query))
     nx.write_gml(G, f_gml)
 
 
@@ -103,44 +104,47 @@ def test():
 
     :return:
     """
-    condition = 'depression'
+    condition = 'breast AND cancer'
     client = ot.get_client()
 
     # results = ot.query(client, q=condition, endpoint='trials')
     # query_str = 'conditions:{{name:{}}}'.format(condition)
-    query_str = 'conditions.name:{}'.format(condition)
+    # query_str = 'conditions.name:{}'.format(condition)
+
+    query_str = 'breast AND cancer AND tamoxifen'
     print('query_str:', query_str)
     results = ot.query(client, q=query_str, endpoint='trials')
 
     print(results['total_count'], len(results['items']))
-    # pprint(results['items'][:5])
-
-    # Save the data in files
-    f_pkl = os.path.join(dir_conditions, '{}.pkl'.format(condition))
-    ot.save_results(filename=f_pkl, results=results)
-
-    # Load the data from files
-    results = ot.load_results(filename=f_pkl)
-    pprint(results['items'][:5])
+    pprint(results['items'][:1])
 
 #####################################################################################
 
 if __name__ == "__main__":
-    do_query = False
 
-    conditions = ['depression', 'diabetes AND type AND 2', 'NAFLD']
+    test()
+    exit()
+
+    do_query = True
+
+    # conditions = ['depression', 'diabetes AND type AND 2', 'NAFLD']
+    conditions = []
+    queries = ['breast AND cancer AND tamoxifen']
+
+    queries = queries + ['conditions.name:{}'.format(c) for c in conditions]
+    pprint(queries)
 
     # get trial data
     if do_query:
         client = ot.get_client()
-        for condition in conditions:
-            get_trials_for_condition(client, condition)
+        for q in queries:
+            get_trials_for_query(client, q)
 
     # create graphs
 
     # create_graph_for_condition('NAFLD')
 
-    for condition in conditions:
-        create_graph_for_condition(condition)
+    for q in queries:
+        create_graph_for_query(q)
 
 
