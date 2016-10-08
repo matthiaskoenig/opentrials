@@ -11,7 +11,9 @@ from pprint import pprint
 import warnings
 import math
 import time
+import pickle
 
+# ------------------------------------------------------------------------
 # The spec that will be used to generate the methods of the API client.
 OPENTRIALS_API_SPEC = 'http://api.opentrials.net/v1/swagger.yaml'
 MAX_PAGE = 100
@@ -25,6 +27,8 @@ ENDPOINTS = ['conditions',
              'search',
              'sources',
              'trials']
+SLEEP = 0.1
+# ------------------------------------------------------------------------
 
 
 def get_client():
@@ -69,8 +73,8 @@ def query(client, endpoint='trials', **kwargs):
         raise ValueError, "endpoint not supported"
 
     # check the max results
-    tmp = client.trials.searchTrials(per_page=20, **kwargs).result()
-    total_count = tmp['total_count']
+    qres = client.trials.searchTrials(per_page=20, **kwargs).result()
+    total_count = qres['total_count']
     if total_count > MAX_RESULT:
         warnings.warn('Query larger than maximum number of supported results: {} > {}'.format(
             total_count,
@@ -85,18 +89,59 @@ def query(client, endpoint='trials', **kwargs):
         page = k+1
         print('page: {}'.format(page))
         kwargs['page'] = page
-        tmp = client.trials.searchTrials(**kwargs).result()
-        all_results.extend(tmp['items'])
-        print("Cummulative results: {:2f} [{}/{}]".format(len(all_results)/total_count, len(all_results), total_count))
-        time.sleep(0.3)
 
+        if endpoint is 'conditions':
+            qres = client.conditions.searchTrials(**kwargs).result()
+        elif endpoint is 'interventions':
+            qres = client.interventions.searchTrials(**kwargs).result()
+        elif endpoint is 'organisations':
+            qres = client.organisations.searchTrials(**kwargs).result()
+        elif endpoint is 'persons':
+            qres = client.persons.searchTrials(**kwargs).result()
+        elif endpoint is 'publications':
+            qres = client.publications.searchTrials(**kwargs).result()
+        elif endpoint is 'search':
+            qres = client.search.searchTrials(**kwargs).result()
+        elif endpoint is 'sources':
+            qres = client.sources.searchTrials(**kwargs).result()
+        elif endpoint is 'trials':
+            qres = client.trials.searchTrials(**kwargs).result()
+
+        all_results.extend(qres['items'])
+        print("Cummulative results: {:2f} [{}/{}]".format(len(all_results)/total_count, len(all_results), total_count))
+        time.sleep(0.1)
+
+        # FIXME: this is just for testing
         if k > 5:
             break
 
     # put back into latests results
-    tmp['items'] = all_results
+    qres['items'] = all_results
 
-    return tmp
+    return qres
+
+
+def save_results(filename, results):
+    """ Pickles results in file.
+
+    :param filename:
+    :param results:
+    :return:
+    """
+    with open(filename, 'wb') as output:
+        pickle.dump(results, output, pickle.HIGHEST_PROTOCOL)
+
+
+def load_results(filename):
+    """ Load pickled data.
+
+    :param filename:
+    :return:
+    """
+    with open(filename, 'rb') as input:
+        results = pickle.load(input)
+
+    return results
 
 
 #######################################################################################
