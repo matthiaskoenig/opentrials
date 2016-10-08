@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """
 Create the graphs for the different conditions.
@@ -56,30 +58,36 @@ def create_graph_for_condition(condition):
     for item in results['items']:
         # trial nodes
         trial_id = item['id']
-        G.add_node(trial_id)
-
-        """
-        "id": "string",
-        "source_id": "string",
-        "identifiers": {},
-        "url": "string",
-        "public_title": "string",
-        "brief_summary": "string",
-        "target_sample_size": 0,
-        "gender": "both",
-        "has_published_results": true,
-        "registration_date": "2016-10-08T09:08:20.146Z",
-        "status": "ongoing",
-        "recruitment_status": "recruiting",
-        """
+        trial_dict = key_dict(item)
+        trial_dict['type'] = 'trial'
+        G.add_node(trial_id, attr_dict=trial_dict)
 
         # conditions
+        for c in item['conditions']:
+            cond_id = c['id']
+            cond_dict = key_dict(c)
+            cond_dict['type'] = 'condition'
+            n_cond = G.add_node(cond_id, attr_dict=cond_dict)
+            G.add_edge(trial_id, cond_id)
 
         # interventions
+        # FIXME
 
         # write the graph
     f_gml = os.path.join(dir_conditions, '{}.gml'.format(condition))
     nx.write_gml(G, f_gml)
+
+def key_dict(item):
+    """ Creates the keyword dict from the given object
+
+    :return:
+    """
+    d = {}
+    for key, value in item.iteritems():
+        if type(value) is unicode:
+            key = key.replace('_', '')  # not supported underscore
+            d[key] = value.encode('utf-8')
+    return d
 
 
 def test():
