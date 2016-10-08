@@ -50,7 +50,7 @@ def create_graph_for_condition(condition):
     # read the results for condition
     f_pkl = os.path.join(dir_conditions, '{}.pkl'.format(condition))
     results = ot.load_results(filename=f_pkl)
-    pprint(results['items'][:1])
+    # pprint(results['items'][:1])
 
     # create the graph
     G = nx.Graph()
@@ -67,15 +67,21 @@ def create_graph_for_condition(condition):
             cond_id = c['id']
             cond_dict = key_dict(c)
             cond_dict['type'] = 'condition'
-            n_cond = G.add_node(cond_id, attr_dict=cond_dict)
+            G.add_node(cond_id, attr_dict=cond_dict)
             G.add_edge(trial_id, cond_id)
 
         # interventions
-        # FIXME
+        for inter in item['interventions']:
+            inter_id = inter['id']
+            inter_dict = key_dict(inter)
+            inter_dict['type'] = 'intervention'
+            G.add_node(inter_id, attr_dict=inter_dict)
+            G.add_edge(trial_id, inter_id)
 
-        # write the graph
+    # write the graph
     f_gml = os.path.join(dir_conditions, '{}.gml'.format(condition))
     nx.write_gml(G, f_gml)
+
 
 def key_dict(item):
     """ Creates the keyword dict from the given object
@@ -87,6 +93,8 @@ def key_dict(item):
         if type(value) is unicode:
             key = key.replace('_', '')  # not supported underscore
             d[key] = value.encode('utf-8')
+    if 'name' in d:
+        d['otlabel'] = d['name']
     return d
 
 
@@ -130,10 +138,9 @@ if __name__ == "__main__":
 
     # create graphs
 
-    create_graph_for_condition('NAFLD')
+    # create_graph_for_condition('NAFLD')
 
-
-    # for condition in conditions:
-    #    create_graph_for_condition(condition)
+    for condition in conditions:
+        create_graph_for_condition(condition)
 
 
