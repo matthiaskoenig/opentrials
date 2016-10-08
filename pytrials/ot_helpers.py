@@ -93,9 +93,9 @@ def query(client, endpoint='trials', **kwargs):
         if endpoint is 'conditions':
             qres = client.conditions.searchTrials(**kwargs).result()
         elif endpoint is 'interventions':
-            qres = client.interventions.searchTrials(**kwargs).result()
+            qres = client.interventions.searchInterventions(**kwargs).result()
         elif endpoint is 'organisations':
-            qres = client.organisations.searchTrials(**kwargs).result()
+            qres = client.organisations.searchT(**kwargs).result()
         elif endpoint is 'persons':
             qres = client.persons.searchTrials(**kwargs).result()
         elif endpoint is 'publications':
@@ -110,10 +110,6 @@ def query(client, endpoint='trials', **kwargs):
         all_results.extend(qres['items'])
         print("Cummulative results: {:2f} [{}/{}]".format(len(all_results)/total_count, len(all_results), total_count))
         time.sleep(0.1)
-
-        # FIXME: this is just for testing
-        if k > 5:
-            break
 
     # put back into latests results
     qres['items'] = all_results
