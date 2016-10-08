@@ -1,3 +1,5 @@
+[![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=flat-square)](http://opensource.org/licenses/LGPL-3.0)
+
 # OpenTrials
 Working with OpenTrials data and API within the OpenTrials Hackathon.   
 http://opentrials.net/  
@@ -30,6 +32,34 @@ Three main ways of data collection
 * scraping registries
 * donations of structured data 
 * crowdsourced document contributions
+
+
+
+## TODO
+* project discription
+* screenshots
+* cleanup README
+* write some tests
+* automatic integration
+
+## License
+* Source Code: [LGPLv3](http://opensource.org/licenses/LGPL-3.0)
+* Documentation: [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)
+
+## Installation
+Requirements are listed in `requirements.txt`. 
+
+To run the code clone the repository via
+```
+git clone https://github.com/matthiaskoenig/opentrials
+```
+and run the unittests via
+```
+nosetests
+```
+The GML query graphs can be generated using
+`query_graphs.py`
+
 
 ## Database & API
 The API is available from   

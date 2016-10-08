@@ -1,8 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 """
-Example interaction with OpenTrials.
+Helper functions to query the OpenTrials database.
+
+The client is based on the swagger definitions and uses bravado
+to create the python interface
+http://api.opentrials.net/v1/docs/#!/trials/searchTrials
 
 The queries are generated using Elastic Search.
 https://www.elastic.co/guide/en/elasticsearch/reference/2.3/query-dsl-query-string-query.html#query-string-syntax
@@ -19,9 +21,9 @@ import pickle
 # ------------------------------------------------------------------------
 # The spec that will be used to generate the methods of the API client.
 OPENTRIALS_API_SPEC = 'http://api.opentrials.net/v1/swagger.yaml'
-MAX_PAGE = 100
-MAX_PER_PAGE = 100
-MAX_RESULT = MAX_PAGE * MAX_PER_PAGE
+MAX_PAGE = 100  # maximal pages on OpenTrials
+MAX_PER_PAGE = 100  # maximal results per page on OpenTrials
+MAX_RESULT = MAX_PAGE * MAX_PER_PAGE  # maximal results one can get via query
 ENDPOINTS = ['conditions',
              'interventions',
              'organisations',
@@ -30,12 +32,15 @@ ENDPOINTS = ['conditions',
              'search',
              'sources',
              'trials']
-SLEEP = 0.1
+SLEEP_TIME = 0.1  # time to sleep between queries
 # ------------------------------------------------------------------------
 
 
 def get_client():
     """ Create OpenTrials client using swagger.
+
+    The client is used to query OpenTrials. We only create
+    the client once and reuse it for subsequent queries.
     :return: OpenTrials client.
     """
 
@@ -57,15 +62,20 @@ def get_client():
 
 def query(client, endpoint='trials', **kwargs):
     """ Query OpenTrials with the given client and search keywords.
-    Returns the results.
+
+    This combines the paginated results into a single result by
+    performing multiple queries for every single page.
+
     Don't use the 'per_page' or 'page' in the query.
     This method will collect the full set of results.
 
-    :param client:
+    :param client: OpenTrials client.
+    :param endpoint:
     :param kwargs:
-    :return:
+    :return: Returns the results
     """
-    # check page
+
+    # check page & per_page keywords
     for key in ['per_page', 'page']:
         if key in kwargs:
             warnings.warn('{} not supported in query, handled automatically'.format(key))
@@ -84,7 +94,7 @@ def query(client, endpoint='trials', **kwargs):
             MAX_RESULT
         ))
 
-    # Combines the per_page and page arguments with sleep
+    # Combines results of all pages (query as many pages as necessary with max entries per page)
     kwargs['per_page'] = MAX_PER_PAGE
     pages = int(math.ceil(total_count/MAX_PER_PAGE))
     all_results = []
@@ -93,28 +103,32 @@ def query(client, endpoint='trials', **kwargs):
         print('page: {}'.format(page))
         kwargs['page'] = page
 
-        if endpoint is 'conditions':
-            qres = client.conditions.searchTrials(**kwargs).result()
+        if endpoint is 'trials':
+            qres = client.trials.searchTrials(**kwargs).result()
+        # FIXME: fix & test other endpoints than 'trials', currently only trials tested
+        elif endpoint is 'conditions':
+            qres = client.conditions.searchConditions(**kwargs).result()
         elif endpoint is 'interventions':
             qres = client.interventions.searchInterventions(**kwargs).result()
         elif endpoint is 'organisations':
-            qres = client.organisations.searchT(**kwargs).result()
+            qres = client.organisations.searchOrganisations(**kwargs).result()
         elif endpoint is 'persons':
-            qres = client.persons.searchTrials(**kwargs).result()
+            qres = client.persons.searchPersons(**kwargs).result()
         elif endpoint is 'publications':
-            qres = client.publications.searchTrials(**kwargs).result()
-        elif endpoint is 'search':
-            qres = client.search.searchTrials(**kwargs).result()
+            qres = client.publications.searchPublications(**kwargs).result()
         elif endpoint is 'sources':
-            qres = client.sources.searchTrials(**kwargs).result()
-        elif endpoint is 'trials':
-            qres = client.trials.searchTrials(**kwargs).result()
+            qres = client.sources.searchSources(**kwargs).result()
+        elif endpoint is 'search':
+            qres = client.sources.searchSources(**kwargs).result()
 
+        # add page results to all results
         all_results.extend(qres['items'])
         print("Cummulative results: {:2f} [{}/{}]".format(len(all_results)/total_count, len(all_results), total_count))
-        time.sleep(0.1)
 
-    # put back into latests results
+        # waiting between queries to not stress the server too much
+        time.sleep(SLEEP)
+
+    # put all_results into latest results
     qres['items'] = all_results
 
     return qres
