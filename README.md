@@ -51,13 +51,13 @@ Our strategy to answer these questions was
 * create the `trial <-> intervention <-> condition` graph from the query results (`GML` format)
 * visualize the results for example queries (NAFLD, diabetes type 2, depression) in the graph visualization software [Cytoscape](http://www.cytoscape.org)
 
-In the created graphs, trials, interventions and conditions nodes are marked in the following way
+In the created graphs, trials, interventions and conditions nodes are marked according to the following legend:
 
 <img src="./results/legend.png" alt="graph legend" height="150"/>
 
-In the following the resulting graph for `condition.name:NAFLD` is shown.
+The resulting graph for `condition.name:NAFLD` shows an interesting structure consisting of a large component and a handful of unconnected componets. Some condition hubs with many connections are observed in the large component.
 
-<img src="./results/NAFLD_no_labels.png" alt="NAFLD complete" height="400"/>
+<img src="./results/NAFLD_no_labels.png" alt="NAFLD complete" height="600"/>
 
 Here we zoomed in into the NAFLD graph with labels
 ![NAFLD part](./results/NAFLD_labels.png)
