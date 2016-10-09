@@ -1,4 +1,5 @@
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=flat-square)](http://opensource.org/licenses/LGPL-3.0)
+[![Build Status](https://travis-ci.org/matthiaskoenig/opentrials.svg?branch=master)](https://travis-ci.org/matthiaskoenig/opentrials)
 
 <img src="./docs/images/opentrials_logo.png" alt="OpenTrials" height="70"/>
 
@@ -146,6 +147,3 @@ http://www.who.int/ictrp/network/trds/en/
 http://www.documentcloud.org  
 https://www.documentcloud.org/public/search/Group:%20okfn%20Project:%20%22OpenTrialsFDA%22  
 http://opentrials.net/2016/08/10/opentrialsfda-unlocking-the-trove-of-clinical-trial-data-in-drugsfda/
-
-## TODO
-* continuous integration
