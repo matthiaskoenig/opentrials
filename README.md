@@ -148,5 +148,4 @@ https://www.documentcloud.org/public/search/Group:%20okfn%20Project:%20%22OpenTr
 http://opentrials.net/2016/08/10/opentrialsfda-unlocking-the-trove-of-clinical-trial-data-in-drugsfda/
 
 ## TODO
-* write tests
 * continuous integration

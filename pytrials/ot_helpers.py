@@ -182,22 +182,14 @@ if __name__ == "__main__":
     pprint(r0.keys())
     print('-' * 80)
 
-    # [obj['public_title'] for obj in result['items']]
-
-
-    # The major API endpoint for exploration is the search endpoint.
-    # But as you saw at the start of the notebook, we have several other endpoints available.
-
     # the total number of trials
     result = client.trials.searchTrials(per_page=100).result()
     trial_count = result['total_count']
 
     print('Total number of trials: {}'.format(trial_count))
 
-
     print("\n\n")
     print("#"*80)
-
 
     trials_depression = client.trials.searchTrials(q="depression").result()
     print(trials_depression['total_count'])
