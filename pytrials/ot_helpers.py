@@ -126,7 +126,7 @@ def query(client, endpoint='trials', **kwargs):
         print("Cummulative results: {:2f} [{}/{}]".format(len(all_results)/total_count, len(all_results), total_count))
 
         # waiting between queries to not stress the server too much
-        time.sleep(SLEEP)
+        time.sleep(SLEEP_TIME)
 
     # put all_results into latest results
     qres['items'] = all_results

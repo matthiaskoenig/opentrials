@@ -1,9 +1,15 @@
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=flat-square)](http://opensource.org/licenses/LGPL-3.0)
 
 # OpenTrials
-Working with OpenTrials data and API within the OpenTrials Hackathon.   
+![OpenTrials](./docs/images/opentrials_logo.png)
+
+This repository summarizes the work with the OpenTrials data and API during the OpenTrials Hackathon 2016 (#OTHackDay).  
 http://opentrials.net/  
-https://www.eventbrite.com/e/opentrials-hack-day-tickets-27046834811  
+https://www.eventbrite.com/e/opentrials-hack-day-tickets-27046834811
+
+Content in this repository is licensed
+* Source Code [LGPLv3](http://opensource.org/licenses/LGPL-3.0)
+* Documentation: [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)
 
 ## Introduction
 OpenTrials is a collaboration between Open Knowledge and Dr Ben Goldacre
@@ -25,77 +31,122 @@ match the following documents and data for each trial:
 * Clinical Study Reports
 * additional documents such as blank consent forms, blank case report forms, and protocols
 
-## Data collection
-explorer.opentrials.net
-
-Three main ways of data collection
+The data in OpenTrials is mainly collected via
 * scraping registries
 * donations of structured data 
 * crowdsourced document contributions
 
 
+## HackDay Project
+Within the HackDay we wanted get an introduction to the OpenTrials
+database structure & content, and use the API via python for queries.
 
-## TODO
-* project discription
-* screenshots
-* cleanup README
-* write some tests
-* automatic integration
+In addition we were interested in the following questions:
+* What conditions are shared between trials for a given subset of trials?
+* What interventions are shared between trials for a given subset of trials?
+* What is the graph/network structure of the `trial <-> intervention <-> condition`
+graph for a certain query?
+* What can we learn from this graph structure (hubs, connections, connected components)?
 
-## License
-* Source Code: [LGPLv3](http://opensource.org/licenses/LGPL-3.0)
-* Documentation: [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)
+Our strategy to answer this questions was
+* use the python swagger API to query OpenTrials
+* create the `trial <-> intervention <-> condition` from the query results (`GML` format)
+* visualize the results for example queries (NAFLD, diabetes type 2, depression) in a graph visualization software ([Cytoscape](http://www.cytoscape.org))
 
-## Installation
-Requirements are listed in `requirements.txt`. 
+In the created graphs, trials, interventions and conditions nodes are marked in the following way
+
+![graph legend](./results/legend.png)
+
+In the following the resulting graph for `condition.name:NAFLD` is shown,
+first the complete graph than a smaller part with the labels.
+![NAFLD complete](./results/NAFLD_no_labels.png)
+![NAFLD part](./results/NAFLD_labels.png)
+
+In the following the resulting graph for `condition.name:depression` is shown.
+Much more trials exist for depression than NAFLD in OpenTrials.
+
+![NAFLD complete](./results/depression_no_labels.png)
+
+Main things we learned:
+- the general graph structure of the `trial <-> intervention <-> condition` network 
+is similar for different conditions consisting of one large connected component
+with a dense center and a collection of small components.
+It seems that some trials use distinct condition and intervention terms than all 
+other studies. The reason could be a missing standardization of the terms or
+some studies which are not so mainstream, looking at uncommon conditions and interventions.
+- few hub nodes exist in the conditions and interventions which are 
+used by many trials. Some of the hubs are identical in their semantic
+meaning, like `condition:NAFLD` and `condition:Nonalcoholic fatty liver disease`
+ These identical terms are not normalized. The normalization of terms results
+ in node duplication with identical meaning.
+
+## Installation & Usage
+The python code is based on the OpenTrials example notebook  
+https://github.com/pwalsh/notebooks/blob/master/opentrials/opentrials.ipynb
+which can be accessed via
+```
+git clone https://github.com/pwalsh/notebooks.git opentrials-notebooks
+cd opentrials-notebook
+jupyter notebook
+```
+
+The requirements to run the python code and the examples are listed in `requirements.txt`. 
 
 To run the code clone the repository via
 ```
 git clone https://github.com/matthiaskoenig/opentrials
 ```
-and run the unittests via
+and check the functionality by running the unittests via
 ```
 nosetests
 ```
-The GML query graphs can be generated using
-`query_graphs.py`
+The OpenTrials queries and query graphs for the examples can than be generated
+executing `pytrials/examples.py`.  
+You should see an output similar to 
+```
+...
+*** Query: breast AND cancer AND tamoxifen ***
+page: 1
+Cummulative results: 0.207039 [100/483]
+page: 2
+Cummulative results: 0.414079 [200/483]
+page: 3
+Cummulative results: 0.621118 [300/483]
+page: 4
+Cummulative results: 0.828157 [400/483]
+page: 5
+Cummulative results: 1.000000 [483/483]
+483 483
+*** Graph: conditions.name:depression ***
+*** Graph: conditions.name:NAFLD ***
+*** Graph: conditions.name:diabetes AND type AND 2 ***
+*** Graph: breast AND cancer AND tamoxifen ***
 
+Process finished with exit code 0
+```
 
-## Database & API
-The API is available from   
+## Resources
+OpenTrial API documentation  
+http://api.opentrials.net/v1/docs/
+
+OpenTrial redash  
+https://app.redash.io/opentrials/  
+email: opentrials@opentrials.net  
+pw: othackday
+
+OpenTrial API repository   
 https://github.com/opentrials/api
 
-Documentation repository
+OpenTrials Documentation repository  
 https://github.com/opentrials/docs
 
 This `database` is based on WHO Trial Registration Data Set:  
 http://www.who.int/ictrp/network/trds/en/
 
-http://api.opentrials.net/v1/docs/
-
-swagger creating SDKs for different languages
-
-http://www.documentcloud.org
-https://www.documentcloud.org/public/search/Group:%20okfn%20Project:%20%22OpenTrialsFDA%22
-OpenTrialsFDA
-
-https://app.redash.io/opentrials/
-email: opentrials@opentrials.net
-pw: othackday
-
-## Python 
-Python notebooks using the swagger API are available 
-https://github.com/pwalsh/notebooks/blob/master/opentrials/opentrials.ipynb
-git clone https://github.com/pwalsh/notebooks.git opentrials-notebooks
-
-## Resources
-API 
-
+http://www.documentcloud.org  
+https://www.documentcloud.org/public/search/Group:%20okfn%20Project:%20%22OpenTrialsFDA%22  
 http://opentrials.net/2016/08/10/opentrialsfda-unlocking-the-trove-of-clinical-trial-data-in-drugsfda/
 
-
-The Data Journalism Handbook
-
-opentrials@okfn.org
-
-Compare trials: Tracking switched outcomes in clinical trials
+## TODO
+* write tests
+* continuous integration
