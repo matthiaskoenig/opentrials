@@ -1,9 +1,8 @@
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=flat-square)](http://opensource.org/licenses/LGPL-3.0)
 
-# OpenTrials
-![OpenTrials](./docs/images/opentrials_logo.png)
+<img src="./docs/images/opentrials_logo.png" alt="OpenTrials" height="70"/>
 
-This repository summarizes the work with the OpenTrials data and API during the OpenTrials Hackathon 2016 (#OTHackDay).  
+This repository hosts the work of the OpenTrials Hackathon 2016 ([#OTHackDay](https://twitter.com/hashtag/OTHackDay?src=hash)).  
 http://opentrials.net/  
 https://www.eventbrite.com/e/opentrials-hack-day-tickets-27046834811
 
@@ -36,7 +35,6 @@ The data in OpenTrials is mainly collected via
 * donations of structured data 
 * crowdsourced document contributions
 
-
 ## HackDay Project
 Within the HackDay we wanted get an introduction to the OpenTrials
 database structure & content, and use the API via python for queries.
@@ -48,18 +46,20 @@ In addition we were interested in the following questions:
 graph for a certain query?
 * What can we learn from this graph structure (hubs, connections, connected components)?
 
-Our strategy to answer this questions was
+Our strategy to answer these questions was
 * use the python swagger API to query OpenTrials
-* create the `trial <-> intervention <-> condition` from the query results (`GML` format)
-* visualize the results for example queries (NAFLD, diabetes type 2, depression) in a graph visualization software ([Cytoscape](http://www.cytoscape.org))
+* create the `trial <-> intervention <-> condition` graph from the query results (`GML` format)
+* visualize the results for example queries (NAFLD, diabetes type 2, depression) in the graph visualization software [Cytoscape](http://www.cytoscape.org)
 
 In the created graphs, trials, interventions and conditions nodes are marked in the following way
 
-![graph legend](./results/legend.png)
+<img src="./results/legend.png" alt="graph legend" height="150"/>
 
-In the following the resulting graph for `condition.name:NAFLD` is shown,
-first the complete graph than a smaller part with the labels.
-![NAFLD complete](./results/NAFLD_no_labels.png)
+In the following the resulting graph for `condition.name:NAFLD` is shown.
+
+<img src="./results/NAFLD_no_labels.png" alt="NAFLD complete" height="400"/>
+
+Here we zoomed in into the NAFLD graph with labels
 ![NAFLD part](./results/NAFLD_labels.png)
 
 In the following the resulting graph for `condition.name:depression` is shown.
@@ -140,7 +140,7 @@ https://github.com/opentrials/api
 OpenTrials Documentation repository  
 https://github.com/opentrials/docs
 
-This `database` is based on WHO Trial Registration Data Set:  
+This database is based on WHO Trial Registration Data Set:  
 http://www.who.int/ictrp/network/trds/en/
 
 http://www.documentcloud.org  
